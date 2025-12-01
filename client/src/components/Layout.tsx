@@ -46,7 +46,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div>
                 <h1 className="font-heading font-bold text-xl tracking-tight text-foreground">Mauri Compass Pest Search</h1>
-                <p className="text-xs text-muted-foreground font-medium tracking-wider uppercase">Waitaha / Canterbury</p>
+                <p className="text-xs text-muted-foreground font-medium tracking-wider uppercase">Aotearoa</p>
               </div>
             </div>
           </Link>
@@ -123,12 +123,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <h3 className="font-heading font-bold text-lg">Mauri Compass Pest Search</h3>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-              Helping you identify and manage invasive plants and animals in the Waitaha / Canterbury region to protect our unique environment.
+              Helping you identify and manage invasive plants and animals in Aotearoa to protect our unique environment.
             </p>
           </div>
           
           <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-            <p>&copy; 2025 Environment Canterbury. All rights reserved.</p>
+            <p>For Kaitiaki by Kaitiaki. &copy; 2025 Mauri Compass. All rights reserved.</p>
             <p className="text-center md:text-right italic font-heading">Toitu te marae a tane; Toitu te marae a Tangaroa; Toitu te iwi.<br/><span className="font-sans not-italic">Protect and strengthen the realms of the land and sea, and they will protect and strengthen the people.</span></p>
           </div>
         </div>
