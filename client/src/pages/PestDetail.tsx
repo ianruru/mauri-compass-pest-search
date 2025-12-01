@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import Layout from "@/components/Layout";
 import { pests, getPestImage } from "@/lib/pest-data";
 import MauriIcons from "@/components/MauriIcons";
+import MauriImpactForm from "@/components/MauriImpactForm";
 import NotFound from "@/pages/NotFound";
 
 export default function PestDetail() {
@@ -111,7 +112,7 @@ export default function PestDetail() {
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-8 border border-border/50 shadow-sm">
+              <div className="bg-card rounded-2xl p-8 border border-border/50 shadow-sm">
               <h2 className="font-serif text-2xl font-bold mb-6 flex items-center">
                 <Info className="w-5 h-5 mr-3 text-primary" />
                 Identification Keywords
@@ -124,6 +125,10 @@ export default function PestDetail() {
                   </span>
                 ))}
               </div>
+            </div>
+
+            <div className="mt-8">
+              <MauriImpactForm pestTitle={pest.Title} />
             </div>
           </div>
 
