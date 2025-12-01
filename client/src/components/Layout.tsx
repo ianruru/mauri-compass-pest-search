@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="absolute inset-0 rounded-full border border-primary/20 scale-125 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500"></div>
               </div>
               <div>
-                <h1 className="font-serif font-bold text-xl tracking-tight text-foreground">ECan Pest Search</h1>
+                <h1 className="font-serif font-bold text-xl tracking-tight text-foreground">Mauri Compass Pest Search</h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wider uppercase">Waitaha / Canterbury</p>
               </div>
             </div>
@@ -121,7 +121,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Leaf className="w-5 h-5 text-primary" />
-                <h3 className="font-serif font-bold text-lg">ECan Pest Search</h3>
+                <h3 className="font-serif font-bold text-lg">Mauri Compass Pest Search</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
                 Helping you identify and manage invasive plants and animals in the Waitaha / Canterbury region to protect our unique environment.
@@ -150,8 +150,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
           
           <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} Environment Canterbury. All rights reserved.</p>
-            <p>Designed with nature in mind.</p>
+            <p>&copy; 2025 Environment Canterbury. All rights reserved.</p>
+            <p className="text-center md:text-right italic">Toitu te marae a tane; Toitu te marae a Tangaroa; Toitu te iwi.<br/>Protect and strengthen the realms of the land and sea, and they will protect and strengthen the people.</p>
           </div>
         </div>
       </footer>
