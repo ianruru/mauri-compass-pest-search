@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Mountain, Droplets, Users, Send } from "lucide-react";
+import { Mountain, Droplets, Users, Send, Upload, X, Image as ImageIcon } from "lucide-react";
 
 interface MauriImpactFormProps {
   pestTitle: string;
@@ -15,6 +15,18 @@ interface MauriImpactFormProps {
 export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [photos, setPhotos] = useState<File[]>([]);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const newPhotos = Array.from(e.target.files);
+      setPhotos(prev => [...prev, ...newPhotos]);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,6 +152,48 @@ export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
               placeholder="Describe specific signs of degradation or changes you've noticed..." 
               className="min-h-[100px]"
             />
+          </div>
+
+          <div className="space-y-3">
+            <Label>Visual Documentation</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="border-2 border-dashed border-border/60 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-muted/30 transition-colors cursor-pointer relative">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  className="absolute inset-0 opacity-0 cursor-pointer" 
+                  onChange={handlePhotoChange}
+                />
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2 text-primary">
+                  <Upload className="w-5 h-5" />
+                </div>
+                <p className="text-sm font-medium">Upload Photos</p>
+                <p className="text-xs text-muted-foreground mt-1">Click or drag images here</p>
+              </div>
+
+              {photos.length > 0 && (
+                <div className="space-y-2">
+                  {photos.map((photo, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/50">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0" />
+                        <span className="text-sm truncate">{photo.name}</span>
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                        onClick={() => removePhoto(index)}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <Button type="submit" className="w-full md:w-auto" disabled={isSubmitting}>
