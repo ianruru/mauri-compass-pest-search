@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Layout from "@/components/Layout";
 import { pests, getPestImage } from "@/lib/pest-data";
+import MauriIcons from "@/components/MauriIcons";
 import NotFound from "@/pages/NotFound";
 
 export default function PestDetail() {
@@ -37,17 +38,24 @@ export default function PestDetail() {
           
           <div className="flex flex-col md:flex-row gap-8 md:items-start">
             <div className="flex-1 space-y-4">
-              <div className="flex flex-wrap gap-2 mb-2">
-                {groups.map(group => (
-                  <Badge key={group} variant="secondary" className="bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 border-none uppercase tracking-wider text-[10px] font-bold">
-                    {group}
-                  </Badge>
-                ))}
-                {pest.Alert && (
-                  <Badge variant="destructive" className="bg-destructive text-destructive-foreground hover:bg-destructive/90 border-none uppercase tracking-wider text-[10px] font-bold">
-                    <AlertTriangle className="w-3 h-3 mr-1" /> Alert
-                  </Badge>
-                )}
+              <div className="flex flex-wrap items-center gap-4 mb-2">
+                <div className="flex flex-wrap gap-2">
+                  {groups.map(group => (
+                    <Badge key={group} variant="secondary" className="bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 border-none uppercase tracking-wider text-[10px] font-bold">
+                      {group}
+                    </Badge>
+                  ))}
+                  {pest.Alert && (
+                    <Badge variant="destructive" className="bg-destructive text-destructive-foreground hover:bg-destructive/90 border-none uppercase tracking-wider text-[10px] font-bold">
+                      <AlertTriangle className="w-3 h-3 mr-1" /> Alert
+                    </Badge>
+                  )}
+                </div>
+                <MauriIcons 
+                  groups={pest.pestgroups} 
+                  management={pest.managementapproaches} 
+                  alert={pest.Alert} 
+                />
               </div>
               
               <h1 className="font-serif text-4xl md:text-6xl font-bold text-foreground leading-tight">

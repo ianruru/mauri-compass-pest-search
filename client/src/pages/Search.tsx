@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Layout from "@/components/Layout";
 import { pests, getPestGroups, getPestTypes, getPestImage } from "@/lib/pest-data";
+import MauriIcons from "@/components/MauriIcons";
 
 export default function Search() {
   const searchString = useSearch();
@@ -219,10 +220,16 @@ export default function Search() {
                     </div>
                     
                     <div className="p-5 flex-1 flex flex-col">
-                      <div className="mb-2">
+                      <div className="mb-2 flex justify-between items-start">
                         <Badge variant="secondary" className="text-[10px] font-bold tracking-wider uppercase bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 border-none">
                           {pest.pestgroups.split(',')[0]}
                         </Badge>
+                        <MauriIcons 
+                          groups={pest.pestgroups} 
+                          management={pest.managementapproaches} 
+                          alert={pest.Alert} 
+                          className="scale-75 origin-top-right -mt-1 -mr-1"
+                        />
                       </div>
                       
                       <h3 className="font-serif text-lg font-bold text-foreground leading-tight mb-1 group-hover:text-primary transition-colors">
