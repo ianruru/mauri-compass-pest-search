@@ -113,7 +113,7 @@ export default function PestDetail() {
             </div>
 
               <div className="bg-card rounded-2xl p-8 border border-border/50 shadow-sm">
-              <h2 className="font-serif text-2xl font-bold mb-6 flex items-center">
+              <h2 className="font-heading text-2xl font-bold mb-6 flex items-center">
                 <Info className="w-5 h-5 mr-3 text-primary" />
                 Identification Keywords
               </h2>

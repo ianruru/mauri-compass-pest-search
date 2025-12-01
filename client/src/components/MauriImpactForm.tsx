@@ -47,7 +47,7 @@ export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
           <div className="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center mx-auto">
             <Send className="w-6 h-6" />
           </div>
-          <h3 className="font-serif text-xl font-bold text-foreground">Ngā mihi nui!</h3>
+          <h3 className="font-heading text-xl font-bold text-foreground">Ngā mihi nui!</h3>
           <p className="text-muted-foreground">
             Thank you for your observation. Your contribution helps us better understand the impact of {pestTitle} on our local mauri.
           </p>
@@ -62,7 +62,7 @@ export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
   return (
     <Card className="overflow-hidden border-border/60 shadow-sm">
       <CardHeader className="bg-muted/30 pb-4">
-        <CardTitle className="font-serif text-xl flex items-center gap-2">
+        <CardTitle className="font-heading text-xl flex items-center gap-2">
           Mauri Impact Assessment
         </CardTitle>
         <CardDescription>

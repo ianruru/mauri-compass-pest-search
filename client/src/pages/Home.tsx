@@ -39,12 +39,12 @@ export default function Home() {
               Mauri Compass
             </div>
             
-            <h1 className="font-serif text-5xl md:text-7xl font-bold text-foreground leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+            <h1 className="font-heading text-5xl md:text-7xl font-bold text-foreground leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
               Identify & Manage <br />
-              <span className="text-primary italic">Invasive Species</span>
+              <span className="text-primary font-light">Invasive Species</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
               A comprehensive field guide to {totalSpecies} invasive plants and animals affecting our region's biodiversity. Learn to identify, report, and manage them.
             </p>
 
@@ -85,21 +85,21 @@ export default function Home() {
               <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-secondary-foreground mb-2">
                 <Search className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl font-bold">Identify</h3>
+              <h3 className="font-heading text-xl font-bold">Identify</h3>
               <p className="text-muted-foreground">Browse our extensive database with high-quality images to correctly identify pests.</p>
             </div>
             <div className="flex flex-col items-center text-center space-y-3 p-6 rounded-2xl hover:bg-white/60 transition-colors duration-500">
               <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center text-destructive mb-2">
                 <AlertTriangle className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl font-bold">Report</h3>
+              <h3 className="font-heading text-xl font-bold">Report</h3>
               <p className="text-muted-foreground">Find out which species are under active management and need to be reported immediately.</p>
             </div>
             <div className="flex flex-col items-center text-center space-y-3 p-6 rounded-2xl hover:bg-white/60 transition-colors duration-500">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-2">
                 <Info className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-xl font-bold">Manage</h3>
+              <h3 className="font-heading text-xl font-bold">Manage</h3>
               <p className="text-muted-foreground">Access detailed management approaches and community-led initiatives for each species.</p>
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function Home() {
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div className="space-y-2">
-              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Recent Additions</h2>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Recent Additions</h2>
               <p className="text-muted-foreground max-w-md">Explore some of the species currently listed in our database.</p>
             </div>
             <Link href="/search">
@@ -148,10 +148,10 @@ export default function Home() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold tracking-wider text-primary uppercase">{pest.pestgroups}</span>
                     </div>
-                    <h3 className="font-serif text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="font-heading text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                       {pest.Title}
                     </h3>
-                    <p className="text-sm text-muted-foreground italic font-serif">
+                    <p className="text-sm text-muted-foreground italic font-sans">
                       {pest.Latin}
                     </p>
                   </div>
@@ -167,7 +167,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}></div>
         
         <div className="container relative z-10 text-center">
-          <h2 className="font-serif text-3xl md:text-5xl font-bold mb-6 text-primary-foreground">Help Protect Our Environment</h2>
+          <h2 className="font-heading text-3xl md:text-5xl font-bold mb-6 text-primary-foreground">Help Protect Our Environment</h2>
           <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto mb-10">
             Your observations help us manage pests effectively. If you spot an invasive species, check our database for management advice or report it.
           </p>

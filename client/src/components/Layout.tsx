@@ -45,7 +45,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="absolute inset-0 rounded-full border border-primary/20 scale-125 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500"></div>
               </div>
               <div>
-                <h1 className="font-serif font-bold text-xl tracking-tight text-foreground">Mauri Compass Pest Search</h1>
+                <h1 className="font-heading font-bold text-xl tracking-tight text-foreground">Mauri Compass Pest Search</h1>
                 <p className="text-xs text-muted-foreground font-medium tracking-wider uppercase">Waitaha / Canterbury</p>
               </div>
             </div>
@@ -88,14 +88,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       <Leaf className="w-5 h-5" />
                     </div>
                     <div>
-                      <h2 className="font-serif font-bold text-xl">Menu</h2>
+                      <h2 className="font-heading font-bold text-xl">Menu</h2>
                     </div>
                   </div>
                   <nav className="flex flex-col gap-4">
                     {navLinks.map((link) => (
                       <Link key={link.href} href={link.href}>
-                        <span className={`text-lg font-serif transition-colors cursor-pointer ${
-                          location === link.href ? "text-primary italic" : "text-muted-foreground hover:text-foreground"
+                        <span className={`text-lg font-heading transition-colors cursor-pointer ${
+                          location === link.href ? "text-primary font-medium" : "text-muted-foreground hover:text-foreground"
                         }`}>
                           {link.label}
                         </span>
@@ -120,7 +120,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="flex items-center gap-2">
               <Leaf className="w-5 h-5 text-primary" />
-              <h3 className="font-serif font-bold text-lg">Mauri Compass Pest Search</h3>
+              <h3 className="font-heading font-bold text-lg">Mauri Compass Pest Search</h3>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
               Helping you identify and manage invasive plants and animals in the Waitaha / Canterbury region to protect our unique environment.
@@ -129,7 +129,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           
           <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
             <p>&copy; 2025 Environment Canterbury. All rights reserved.</p>
-            <p className="text-center md:text-right italic">Toitu te marae a tane; Toitu te marae a Tangaroa; Toitu te iwi.<br/>Protect and strengthen the realms of the land and sea, and they will protect and strengthen the people.</p>
+            <p className="text-center md:text-right italic font-heading">Toitu te marae a tane; Toitu te marae a Tangaroa; Toitu te iwi.<br/><span className="font-sans not-italic">Protect and strengthen the realms of the land and sea, and they will protect and strengthen the people.</span></p>
           </div>
         </div>
       </footer>
