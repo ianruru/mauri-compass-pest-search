@@ -117,36 +117,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Footer */}
       <footer className="bg-muted/30 border-t border-border/40 py-12 relative z-10">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Leaf className="w-5 h-5 text-primary" />
-                <h3 className="font-serif font-bold text-lg">Mauri Compass Pest Search</h3>
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-                Helping you identify and manage invasive plants and animals in the Waitaha / Canterbury region to protect our unique environment.
-              </p>
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div className="flex items-center gap-2">
+              <Leaf className="w-5 h-5 text-primary" />
+              <h3 className="font-serif font-bold text-lg">Mauri Compass Pest Search</h3>
             </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-serif font-semibold text-foreground">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/"><span className="hover:text-primary cursor-pointer transition-colors">Home</span></Link></li>
-                <li><Link href="/search"><span className="hover:text-primary cursor-pointer transition-colors">Search Database</span></Link></li>
-                <li><a href="https://www.ecan.govt.nz" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Environment Canterbury</a></li>
-              </ul>
-            </div>
-            
-            <div className="space-y-4">
-              <h4 className="font-serif font-semibold text-foreground">Contact</h4>
-              <p className="text-sm text-muted-foreground">
-                Need help identifying a pest?<br />
-                Contact our biosecurity team.
-              </p>
-              <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80 font-serif italic">
-                Get in touch &rarr;
-              </Button>
-            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
+              Helping you identify and manage invasive plants and animals in the Waitaha / Canterbury region to protect our unique environment.
+            </p>
           </div>
           
           <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground">
