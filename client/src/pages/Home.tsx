@@ -1,10 +1,22 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ArrowRight, Search, AlertTriangle, Info } from "lucide-react";
 import Layout from "@/components/Layout";
 import { pests } from "@/lib/pest-data";
+import { useState } from "react";
 
 export default function Home() {
+  const [, setLocation] = useLocation();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setLocation(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   // Get some featured pests (random or specific)
   const featuredPests = pests.slice(0, 3);
   const totalSpecies = pests.length;
@@ -35,19 +47,31 @@ export default function Home() {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
               A comprehensive field guide to {totalSpecies} invasive plants and animals affecting our region's biodiversity. Learn to identify, report, and manage them.
             </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
-              <Link href="/search">
-                <Button size="lg" className="rounded-full px-8 h-14 text-base bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:scale-105">
-                  <Search className="w-5 h-5 mr-2" />
-                  Start Searching
+
+            <div className="max-w-xl mx-auto pt-6 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-300">
+              <form onSubmit={handleSearch} className="relative flex items-center">
+                <Search className="absolute left-4 text-muted-foreground w-5 h-5 z-10" />
+                <Input 
+                  type="text" 
+                  placeholder="Search for a pest (e.g., 'Gorse', 'Possum')..." 
+                  className="pl-12 pr-32 h-16 rounded-full text-lg shadow-lg border-primary/20 focus-visible:ring-primary/30 bg-background/80 backdrop-blur-sm"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="absolute right-1.5 rounded-full px-6 h-13 text-base bg-primary hover:bg-primary/90 text-primary-foreground shadow-md transition-all hover:scale-105"
+                >
+                  Search
                 </Button>
-              </Link>
-              <a href="https://www.ecan.govt.nz/your-region/your-environment/biodiversity-and-biosecurity/" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" size="lg" className="rounded-full px-8 h-14 text-base border-primary/20 hover:bg-primary/5 hover:text-primary transition-all">
-                  Learn about Biosecurity
-                </Button>
-              </a>
+              </form>
+              <div className="flex justify-center gap-4 mt-4 text-sm text-muted-foreground">
+                <span>Popular:</span>
+                <Link href="/search?q=Gorse"><span className="hover:text-primary cursor-pointer underline decoration-dotted">Gorse</span></Link>
+                <Link href="/search?q=Wallaby"><span className="hover:text-primary cursor-pointer underline decoration-dotted">Wallaby</span></Link>
+                <Link href="/search?q=Broom"><span className="hover:text-primary cursor-pointer underline decoration-dotted">Broom</span></Link>
+              </div>
             </div>
           </div>
         </div>

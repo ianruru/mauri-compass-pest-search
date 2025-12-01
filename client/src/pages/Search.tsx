@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "wouter";
+import { useState, useMemo, useEffect } from "react";
+import { Link, useSearch } from "wouter";
 import { Search as SearchIcon, Filter, X, ChevronDown, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,16 @@ import Layout from "@/components/Layout";
 import { pests, getPestGroups, getPestTypes, getPestImage } from "@/lib/pest-data";
 
 export default function Search() {
+  const searchString = useSearch();
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const q = params.get("q");
+    if (q) {
+      setSearchQuery(q);
+    }
+  }, [searchString]);
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [showAlertsOnly, setShowAlertsOnly] = useState(false);
