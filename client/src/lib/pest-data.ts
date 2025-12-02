@@ -47,8 +47,16 @@ export const getManagementApproaches = () => {
   return Array.from(approaches).sort();
 };
 
-export const getPestImage = (pest: Pest) => {
-  if (!pest.FeaturedImage) return null;
+// Accept both old Pest interface and new database pest type
+type PestLike = Pest | { title: string; featuredImage: string | null };
+
+export const getPestImage = (pest: PestLike) => {
+  // Handle both old and new pest types
+  const hasFeaturedImage = 'FeaturedImage' in pest ? pest.FeaturedImage : pest.featuredImage;
+  if (!hasFeaturedImage) return null;
+  
+  // Get the title from either format
+  const pestTitle = 'Title' in pest ? pest.Title : pest.title;
   
   // Convert ECan path to local path
   // Format: /assets/Uploads/Pest-images/Name.jpg -> /pest_images/001_Name.jpg
@@ -56,10 +64,10 @@ export const getPestImage = (pest: Pest) => {
   
   // Since we renamed files during download, we'll construct the path based on the title
   // consistent with how we saved them
-  const safeTitle = pest.Title.replace(/[^a-zA-Z0-9 \-_]/g, "").trim().replace(/ /g, "_");
+  const safeTitle = pestTitle.replace(/[^a-zA-Z0-9 \-_]/g, "").trim().replace(/ /g, "_");
   
   // We need to find the index to match the numbering
-  const index = pests.findIndex(p => p.Title === pest.Title) + 1;
+  const index = pests.findIndex(p => p.Title === pestTitle) + 1;
   const paddedIndex = index.toString().padStart(3, '0');
   
   return `/pest_images/${paddedIndex}_${safeTitle}.jpg`;

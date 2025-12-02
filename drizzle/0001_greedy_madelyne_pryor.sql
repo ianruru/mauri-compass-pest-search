@@ -1,0 +1,40 @@
+CREATE TABLE `pests` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`latin` varchar(255),
+	`alsoKnownAs` text,
+	`keywords` text,
+	`pestGroups` text,
+	`pestTypes` text,
+	`managementApproaches` text,
+	`alert` boolean NOT NULL DEFAULT false,
+	`pinned` boolean NOT NULL DEFAULT false,
+	`visible` boolean NOT NULL DEFAULT true,
+	`featuredImage` varchar(500),
+	`link` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `pests_id` PRIMARY KEY(`id`),
+	CONSTRAINT `pests_title_unique` UNIQUE(`title`)
+);
+--> statement-breakpoint
+CREATE TABLE `submissions` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`pestId` int NOT NULL,
+	`pestTitle` varchar(255) NOT NULL,
+	`location` varchar(500) NOT NULL,
+	`observationDate` timestamp NOT NULL,
+	`notes` text,
+	`impactWhenua` enum('none','low','medium','high','severe'),
+	`impactWai` enum('none','low','medium','high','severe'),
+	`impactTangata` enum('none','low','medium','high','severe'),
+	`photoUrls` text,
+	`photoKeys` text,
+	`submitterName` varchar(255),
+	`submitterEmail` varchar(320),
+	`ipAddress` varchar(45),
+	`userAgent` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `submissions_id` PRIMARY KEY(`id`)
+);

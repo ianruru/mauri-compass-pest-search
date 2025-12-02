@@ -3,19 +3,52 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { Mountain, Droplets, Users, Send, Upload, X, Image as ImageIcon } from "lucide-react";
 
 interface MauriImpactFormProps {
+  pestId: number;
   pestTitle: string;
 }
 
-export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function MauriImpactForm({ pestId, pestTitle }: MauriImpactFormProps) {
   const [submitted, setSubmitted] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [formData, setFormData] = useState({
+    location: "",
+    observationDate: "",
+    notes: "",
+    impactWhenua: "none" as "none" | "low" | "medium" | "high" | "severe",
+    impactWai: "none" as "none" | "low" | "medium" | "high" | "severe",
+    impactTangata: "none" as "none" | "low" | "medium" | "high" | "severe",
+    submitterName: "",
+    submitterEmail: "",
+  });
+
+  const createSubmissionMutation = trpc.submissions.create.useMutation({
+    onSuccess: () => {
+      toast.success("Observation submitted successfully! Thank you for your contribution.");
+      setSubmitted(true);
+      // Reset form
+      setFormData({
+        location: "",
+        observationDate: "",
+        notes: "",
+        impactWhenua: "none",
+        impactWai: "none",
+        impactTangata: "none",
+        submitterName: "",
+        submitterEmail: "",
+      });
+      setPhotos([]);
+    },
+    onError: (error) => {
+      toast.error(`Failed to submit observation: ${error.message}`);
+    },
+  });
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -28,176 +61,269 @@ export default function MauriImpactForm({ pestTitle }: MauriImpactFormProps) {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-      toast.success("Mauri impact observation submitted successfully");
-    }, 1500);
+
+    // Convert photo to base64 if exists
+    let photoBase64: string | undefined;
+    if (photos.length > 0) {
+      const reader = new FileReader();
+      photoBase64 = await new Promise((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(photos[0]);
+      });
+    }
+
+    createSubmissionMutation.mutate({
+      pestId,
+      pestTitle,
+      location: formData.location,
+      observationDate: new Date(formData.observationDate),
+      notes: formData.notes || undefined,
+      impactWhenua: formData.impactWhenua !== "none" ? formData.impactWhenua : undefined,
+      impactWai: formData.impactWai !== "none" ? formData.impactWai : undefined,
+      impactTangata: formData.impactTangata !== "none" ? formData.impactTangata : undefined,
+      photoBase64,
+      submitterName: formData.submitterName || undefined,
+      submitterEmail: formData.submitterEmail || undefined,
+    });
   };
 
   if (submitted) {
     return (
-      <Card className="bg-primary/5 border-primary/20">
-        <CardContent className="pt-6 text-center space-y-4">
-          <div className="w-12 h-12 rounded-full bg-primary/20 text-primary flex items-center justify-center mx-auto">
-            <Send className="w-6 h-6" />
+      <Card className="border-2 border-primary/20 bg-primary/5">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+              <Send className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold">Thank You!</h3>
+            <p className="text-muted-foreground">
+              Your observation has been submitted successfully. Kaitiaki will review your submission.
+            </p>
+            <Button onClick={() => setSubmitted(false)} variant="outline">
+              Submit Another Observation
+            </Button>
           </div>
-          <h3 className="font-heading text-xl font-bold text-foreground">Ngā mihi nui!</h3>
-          <p className="text-muted-foreground">
-            Thank you for your observation. Your contribution helps us better understand the impact of {pestTitle} on our local mauri.
-          </p>
-          <Button variant="outline" onClick={() => setSubmitted(false)}>
-            Submit another observation
-          </Button>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="overflow-hidden border-border/60 shadow-sm">
-      <CardHeader className="bg-muted/30 pb-4">
-        <CardTitle className="font-heading text-xl flex items-center gap-2">
-          Mauri Impact Assessment
-        </CardTitle>
+    <Card className="border-2 border-primary/20">
+      <CardHeader>
+        <CardTitle className="text-2xl font-heading">Report Mauri Impact</CardTitle>
         <CardDescription>
-          Share your observations on how {pestTitle} is affecting the mauri (life force) of your local area.
+          Share your observations of <strong>{pestTitle}</strong> and assess its impact on the mauri (life force) of whenua (land), wai (water), and tangata (people).
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
+      <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="location">Location of Observation</Label>
-              <Input id="location" placeholder="e.g., Rakaia Riverbed, Port Hills..." required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="date">Date</Label>
-              <Input id="date" type="date" required />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <Label>Observed Impact on Mauri</Label>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2 p-3 rounded-lg border border-border/60 bg-background/50">
-                <div className="flex items-center gap-2 mb-1">
-                  <Mountain className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-sm">Whenua (Land)</span>
-                </div>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select impact..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No observed impact</SelectItem>
-                    <SelectItem value="low">Low impact</SelectItem>
-                    <SelectItem value="medium">Medium impact</SelectItem>
-                    <SelectItem value="high">High impact</SelectItem>
-                    <SelectItem value="severe">Severe impact</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2 p-3 rounded-lg border border-border/60 bg-background/50">
-                <div className="flex items-center gap-2 mb-1">
-                  <Droplets className="w-4 h-4 text-blue-600" />
-                  <span className="font-medium text-sm">Wai (Water)</span>
-                </div>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select impact..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No observed impact</SelectItem>
-                    <SelectItem value="low">Low impact</SelectItem>
-                    <SelectItem value="medium">Medium impact</SelectItem>
-                    <SelectItem value="high">High impact</SelectItem>
-                    <SelectItem value="severe">Severe impact</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2 p-3 rounded-lg border border-border/60 bg-background/50">
-                <div className="flex items-center gap-2 mb-1">
-                  <Users className="w-4 h-4 text-amber-600" />
-                  <span className="font-medium text-sm">Tangata (People)</span>
-                </div>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select impact..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">No observed impact</SelectItem>
-                    <SelectItem value="low">Low impact</SelectItem>
-                    <SelectItem value="medium">Medium impact</SelectItem>
-                    <SelectItem value="high">High impact</SelectItem>
-                    <SelectItem value="severe">Severe impact</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
+          {/* Location */}
           <div className="space-y-2">
-            <Label htmlFor="notes">Detailed Observations</Label>
-            <Textarea 
-              id="notes" 
-              placeholder="Describe specific signs of degradation or changes you've noticed..." 
-              className="min-h-[100px]"
+            <Label htmlFor="location">Location *</Label>
+            <Input
+              id="location"
+              name="location"
+              placeholder="e.g., Banks Peninsula, Christchurch"
+              required
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             />
           </div>
 
-          <div className="space-y-3">
-            <Label>Visual Documentation</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border-2 border-dashed border-border/60 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-muted/30 transition-colors cursor-pointer relative">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  multiple 
-                  className="absolute inset-0 opacity-0 cursor-pointer" 
-                  onChange={handlePhotoChange}
-                />
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2 text-primary">
-                  <Upload className="w-5 h-5" />
-                </div>
-                <p className="text-sm font-medium">Upload Photos</p>
-                <p className="text-xs text-muted-foreground mt-1">Click or drag images here</p>
-              </div>
+          {/* Observation Date */}
+          <div className="space-y-2">
+            <Label htmlFor="observationDate">Observation Date *</Label>
+            <Input
+              id="observationDate"
+              name="observationDate"
+              type="date"
+              required
+              value={formData.observationDate}
+              onChange={(e) => setFormData({ ...formData, observationDate: e.target.value })}
+            />
+          </div>
 
-              {photos.length > 0 && (
-                <div className="space-y-2">
-                  {photos.map((photo, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 rounded-md bg-muted/50 border border-border/50">
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        <ImageIcon className="w-4 h-4 text-muted-foreground shrink-0" />
-                        <span className="text-sm truncate">{photo.name}</span>
-                      </div>
-                      <Button 
-                        type="button" 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 text-muted-foreground hover:text-destructive"
-                        onClick={() => removePhoto(index)}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
+          {/* Mauri Impact Assessments */}
+          <div className="space-y-4 p-4 bg-muted/30 rounded-lg border border-border/50">
+            <h3 className="font-semibold text-lg flex items-center gap-2">
+              <Mountain className="w-5 h-5 text-primary" />
+              Mauri Impact Assessment
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Rate the observed impact on each element of mauri
+            </p>
+
+            {/* Whenua (Land) */}
+            <div className="space-y-2">
+              <Label htmlFor="impactWhenua" className="flex items-center gap-2">
+                <Mountain className="w-4 h-4" />
+                Whenua (Land)
+              </Label>
+              <Select
+                value={formData.impactWhenua}
+                onValueChange={(value) => setFormData({ ...formData, impactWhenua: value as any })}
+              >
+                <SelectTrigger id="impactWhenua">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Impact</SelectItem>
+                  <SelectItem value="low">Low Impact</SelectItem>
+                  <SelectItem value="medium">Medium Impact</SelectItem>
+                  <SelectItem value="high">High Impact</SelectItem>
+                  <SelectItem value="severe">Severe Impact</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Wai (Water) */}
+            <div className="space-y-2">
+              <Label htmlFor="impactWai" className="flex items-center gap-2">
+                <Droplets className="w-4 h-4" />
+                Wai (Water)
+              </Label>
+              <Select
+                value={formData.impactWai}
+                onValueChange={(value) => setFormData({ ...formData, impactWai: value as any })}
+              >
+                <SelectTrigger id="impactWai">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Impact</SelectItem>
+                  <SelectItem value="low">Low Impact</SelectItem>
+                  <SelectItem value="medium">Medium Impact</SelectItem>
+                  <SelectItem value="high">High Impact</SelectItem>
+                  <SelectItem value="severe">Severe Impact</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Tangata (People) */}
+            <div className="space-y-2">
+              <Label htmlFor="impactTangata" className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Tangata (People)
+              </Label>
+              <Select
+                value={formData.impactTangata}
+                onValueChange={(value) => setFormData({ ...formData, impactTangata: value as any })}
+              >
+                <SelectTrigger id="impactTangata">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Impact</SelectItem>
+                  <SelectItem value="low">Low Impact</SelectItem>
+                  <SelectItem value="medium">Medium Impact</SelectItem>
+                  <SelectItem value="high">High Impact</SelectItem>
+                  <SelectItem value="severe">Severe Impact</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <Button type="submit" className="w-full md:w-auto" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Observation"}
+          {/* Notes */}
+          <div className="space-y-2">
+            <Label htmlFor="notes">Observation Notes</Label>
+            <Textarea
+              id="notes"
+              name="notes"
+              placeholder="Describe what you observed..."
+              rows={4}
+              value={formData.notes}
+              onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+            />
+          </div>
+
+          {/* Photo Upload */}
+          <div className="space-y-2">
+            <Label htmlFor="photo">Photo (optional)</Label>
+            <div className="flex items-center gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById('photo')?.click()}
+                className="w-full"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {photos.length > 0 ? `${photos.length} photo(s) selected` : 'Upload Photo'}
+              </Button>
+              <input
+                id="photo"
+                name="photo"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+            </div>
+            {photos.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {photos.map((photo, index) => (
+                  <div key={index} className="relative group">
+                    <div className="w-20 h-20 rounded-lg overflow-hidden border-2 border-border">
+                      <img
+                        src={URL.createObjectURL(photo)}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removePhoto(index)}
+                      className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Submitter Info */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="submitterName">Your Name (optional)</Label>
+              <Input
+                id="submitterName"
+                name="submitterName"
+                placeholder="Your name"
+                value={formData.submitterName}
+                onChange={(e) => setFormData({ ...formData, submitterName: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="submitterEmail">Your Email (optional)</Label>
+              <Input
+                id="submitterEmail"
+                name="submitterEmail"
+                type="email"
+                placeholder="your@email.com"
+                value={formData.submitterEmail}
+                onChange={(e) => setFormData({ ...formData, submitterEmail: e.target.value })}
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            disabled={createSubmissionMutation.isPending}
+          >
+            {createSubmissionMutation.isPending ? (
+              <>Submitting...</>
+            ) : (
+              <>
+                <Send className="w-4 h-4 mr-2" />
+                Submit Observation
+              </>
+            )}
           </Button>
         </form>
       </CardContent>

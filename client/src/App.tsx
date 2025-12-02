@@ -8,16 +8,26 @@ import Home from "./pages/Home";
 import Search from "./pages/Search";
 import PestDetail from "./pages/PestDetail";
 import About from "./pages/About";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminSubmissions from "./pages/AdminSubmissions";
+import AdminPests from "./pages/AdminPests";
 
 function Router() {
   return (
     <Switch>
+      {/* Public Routes */}
       <Route path="/" component={Home} />
       <Route path="/search" component={Search} />
       <Route path="/pest/:title" component={PestDetail} />
       <Route path="/about" component={About} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/submissions" component={AdminSubmissions} />
+      <Route path="/admin/pests" component={AdminPests} />
+      
+      {/* 404 */}
       <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );

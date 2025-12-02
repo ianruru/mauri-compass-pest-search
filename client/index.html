@@ -14,6 +14,18 @@
 
   <body>
     <div id="root"></div>
+    <!-- Netlify Form Detection Helper -->
+    <form name="mauri-impact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="pestName" />
+      <input type="text" name="location" />
+      <textarea name="observation"></textarea>
+      <input type="file" name="photo" />
+      <input type="text" name="impactLand" />
+      <input type="text" name="impactWater" />
+      <input type="text" name="impactPeople" />
+    </form>
     <script type="module" src="/src/main.tsx"></script>
     <script
       defer

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Search, AlertTriangle, Info } from "lucide-react";
 import Layout from "@/components/Layout";
-import { pests } from "@/lib/pest-data";
+import { trpc } from "@/lib/trpc";
 import { useState } from "react";
 
 export default function Home() {
@@ -17,9 +17,10 @@ export default function Home() {
     }
   };
 
-  // Get some featured pests (random or specific)
-  const featuredPests = pests.slice(0, 3);
-  const totalSpecies = pests.length;
+  // Fetch pests from API
+  const { data: pests, isLoading } = trpc.pests.list.useQuery();
+  const featuredPests = pests?.slice(0, 3) || [];
+  const totalSpecies = pests?.length || 0;
   
   return (
     <Layout>
@@ -123,21 +124,21 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredPests.map((pest, i) => (
-              <Link key={i} href={`/pest/${encodeURIComponent(pest.Title)}`}>
+              <Link key={i} href={`/pest/${encodeURIComponent(pest.title)}`}>
                 <div className="group cursor-pointer h-full">
                   <div className="relative overflow-hidden rounded-2xl aspect-[4/3] mb-4 shadow-sm transition-all duration-500 group-hover:shadow-md group-hover:-translate-y-1">
                     <div className="absolute inset-0 bg-muted animate-pulse" />
-                    {pest.FeaturedImage && (
+                    {pest.featuredImage && (
                       <img 
-                        src={`/pest_images/${(pests.findIndex(p => p.Title === pest.Title) + 1).toString().padStart(3, '0')}_${pest.Title.replace(/[^a-zA-Z0-9 \-_]/g, "").trim().replace(/ /g, "_")}.jpg`}
-                        alt={pest.Title}
+                        src={`/pest_images/${((pests?.findIndex(p => p.title === pest.title) ?? -1) + 1).toString().padStart(3, '0')}_${pest.title.replace(/[^a-zA-Z0-9 \-_]/g, "").trim().replace(/ /g, "_")}.jpg`}
+                        alt={pest.title}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
-                    {pest.Alert && (
+                    {pest.alert && (
                       <div className="absolute top-3 right-3 bg-destructive/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                         ALERT
                       </div>
@@ -146,13 +147,13 @@ export default function Home() {
                   
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold tracking-wider text-primary uppercase">{pest.pestgroups}</span>
+                      <span className="text-xs font-bold tracking-wider text-primary uppercase">{pest.pestGroups}</span>
                     </div>
                     <h3 className="font-heading text-xl font-bold text-foreground group-hover:text-primary transition-colors">
-                      {pest.Title}
+                      {pest.title}
                     </h3>
                     <p className="text-sm text-muted-foreground italic font-sans">
-                      {pest.Latin}
+                      {pest.latin}
                     </p>
                   </div>
                 </div>

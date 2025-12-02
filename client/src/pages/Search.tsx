@@ -13,7 +13,8 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import Layout from "@/components/Layout";
-import { pests, getPestGroups, getPestTypes, getPestImage } from "@/lib/pest-data";
+import { getPestImage } from "@/lib/pest-data";
+import { trpc } from "@/lib/trpc";
 import MauriIcons from "@/components/MauriIcons";
 
 export default function Search() {
@@ -31,32 +32,56 @@ export default function Search() {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [showAlertsOnly, setShowAlertsOnly] = useState(false);
 
-  const groups = useMemo(() => getPestGroups(), []);
-  const types = useMemo(() => getPestTypes(), []);
+  // Fetch pests from API
+  const { data: pests, isLoading } = trpc.pests.list.useQuery();
+
+  // Extract unique groups and types from API data
+  const groups = useMemo(() => {
+    if (!pests) return [];
+    const groupSet = new Set<string>();
+    pests.forEach(pest => {
+      if (pest.pestGroups) {
+        pest.pestGroups.split(',').forEach(g => groupSet.add(g.trim()));
+      }
+    });
+    return Array.from(groupSet).sort();
+  }, [pests]);
+
+  const types = useMemo(() => {
+    if (!pests) return [];
+    const typeSet = new Set<string>();
+    pests.forEach(pest => {
+      if (pest.pestTypes) {
+        pest.pestTypes.split(',').forEach(t => typeSet.add(t.trim()));
+      }
+    });
+    return Array.from(typeSet).sort();
+  }, [pests]);
 
   const filteredPests = useMemo(() => {
+    if (!pests) return [];
     return pests.filter((pest) => {
       // Search query filter
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = 
         !searchQuery || 
-        pest.Title.toLowerCase().includes(searchLower) || 
-        pest.Latin.toLowerCase().includes(searchLower) ||
-        (typeof pest.AlsoKnownAs === 'string' && pest.AlsoKnownAs.toLowerCase().includes(searchLower)) ||
-        pest.keywords.toLowerCase().includes(searchLower);
+        pest.title.toLowerCase().includes(searchLower) || 
+        (pest.latin && pest.latin.toLowerCase().includes(searchLower)) ||
+        (pest.alsoKnownAs && pest.alsoKnownAs.toLowerCase().includes(searchLower)) ||
+        (pest.keywords && pest.keywords.toLowerCase().includes(searchLower));
 
       // Group filter
       const matchesGroup = 
         selectedGroups.length === 0 || 
-        (pest.pestgroups && pest.pestgroups.split(',').some(g => selectedGroups.includes(g.trim())));
+        (pest.pestGroups && pest.pestGroups.split(',').some(g => selectedGroups.includes(g.trim())));
 
       // Type filter
       const matchesType = 
         selectedTypes.length === 0 || 
-        (pest.pesttypes && pest.pesttypes.split(',').some(t => selectedTypes.includes(t.trim())));
+        (pest.pestTypes && pest.pestTypes.split(',').some(t => selectedTypes.includes(t.trim())));
 
       // Alert filter
-      const matchesAlert = !showAlertsOnly || pest.Alert;
+      const matchesAlert = !showAlertsOnly || pest.alert;
 
       return matchesSearch && matchesGroup && matchesType && matchesAlert;
     });
@@ -190,13 +215,13 @@ export default function Search() {
               const imagePath = getPestImage(pest);
               
               return (
-                <Link key={i} href={`/pest/${encodeURIComponent(pest.Title)}`}>
+                <Link key={i} href={`/pest/${encodeURIComponent(pest.title)}`}>
                   <div className="group cursor-pointer flex flex-col h-full bg-card rounded-xl overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                     <div className="relative aspect-[4/3] overflow-hidden bg-muted">
                       {imagePath ? (
                         <img 
                           src={imagePath} 
-                          alt={pest.Title}
+                          alt={pest.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -206,7 +231,7 @@ export default function Search() {
                         </div>
                       )}
                       
-                      {pest.Alert && (
+                      {pest.alert && (
                         <div className="absolute top-3 right-3 bg-destructive/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded shadow-sm uppercase tracking-wider">
                           Alert
                         </div>
@@ -222,33 +247,33 @@ export default function Search() {
                     <div className="p-5 flex-1 flex flex-col">
                       <div className="mb-2 flex justify-between items-start">
                         <Badge variant="secondary" className="text-[10px] font-bold tracking-wider uppercase bg-secondary/50 text-secondary-foreground hover:bg-secondary/70 border-none">
-                          {pest.pestgroups.split(',')[0]}
+                          {pest.pestGroups?.split(',')[0] || 'Unknown'}
                         </Badge>
                         <MauriIcons 
-                          groups={pest.pestgroups} 
-                          management={pest.managementapproaches} 
-                          alert={pest.Alert} 
+                          groups={pest.pestGroups || ''} 
+                          management={pest.managementApproaches || ''} 
+                          alert={pest.alert} 
                           className="scale-75 origin-top-right -mt-1 -mr-1"
                         />
                       </div>
                       
                       <h3 className="font-serif text-lg font-bold text-foreground leading-tight mb-1 group-hover:text-primary transition-colors">
-                        {pest.Title}
+                        {pest.title}
                       </h3>
                       
                       <p className="text-sm text-muted-foreground italic font-serif mb-4 line-clamp-1">
-                        {pest.Latin}
+                        {pest.latin}
                       </p>
                       
                       <div className="mt-auto pt-4 border-t border-border/30 flex flex-wrap gap-1">
-                        {pest.pesttypes.split(',').slice(0, 2).map((type, idx) => (
+                        {pest.pestTypes?.split(',').slice(0, 2).map((type: string, idx: number) => (
                           <span key={idx} className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-sm">
                             {type.trim()}
                           </span>
                         ))}
-                        {pest.pesttypes.split(',').length > 2 && (
+                        {(pest.pestTypes?.split(',').length ?? 0) > 2 && (
                           <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded-sm">
-                            +{pest.pesttypes.split(',').length - 2}
+                            +{(pest.pestTypes?.split(',').length ?? 0) - 2}
                           </span>
                         )}
                       </div>

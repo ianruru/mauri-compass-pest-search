@@ -8,7 +8,7 @@ export default function About() {
         <div className="container max-w-4xl text-center">
           <h1 className="font-serif text-4xl md:text-6xl font-bold text-foreground mb-6">About Pest Search</h1>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            A comprehensive resource for identifying and managing invasive species in the Waitaha / Canterbury region.
+            A comprehensive resource for identifying and managing invasive species in Aotearoa.
           </p>
         </div>
       </div>
@@ -18,7 +18,7 @@ export default function About() {
           <div className="space-y-6">
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">Why it matters</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Invasive pests pose a significant threat to Canterbury's unique biodiversity, economy, and cultural values. They can outcompete native species, damage crops, and alter entire ecosystems.
+              Invasive pests pose a significant threat to Aotearoa's unique biodiversity, economy, and cultural values. They can outcompete native species, damage crops, and alter entire ecosystems.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">
               Correct identification is the first step in effective pest management. This database provides the tools you need to recognize these species and understand how they are managed in our region.
@@ -59,7 +59,7 @@ export default function About() {
             </div>
             <h3 className="font-serif text-xl font-bold mb-3">Regional Focus</h3>
             <p className="text-muted-foreground">
-              Information specifically tailored to the Canterbury environment and local ecosystems.
+              Information specifically tailored to the Aotearoa environment and local ecosystems.
             </p>
           </div>
         </div>
@@ -67,11 +67,11 @@ export default function About() {
         <div className="bg-primary/5 rounded-3xl p-8 md:p-16 text-center">
           <h2 className="font-serif text-3xl font-bold mb-6">Need more information?</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            For detailed advice on pest control methods or to report a pest sighting, visit the Environment Canterbury website.
+            For detailed advice on pest control methods or to report a pest sighting, visit the Mauri Compass website.
           </p>
           <a href="https://www.ecan.govt.nz/biosecurity" target="_blank" rel="noopener noreferrer" className="inline-block">
             <button className="bg-primary text-primary-foreground px-8 py-4 rounded-full font-bold shadow-lg hover:bg-primary/90 transition-colors">
-              Visit Environment Canterbury
+              Visit Mauri Compass
             </button>
           </a>
         </div>

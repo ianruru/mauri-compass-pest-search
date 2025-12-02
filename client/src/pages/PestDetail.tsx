@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Layout from "@/components/Layout";
-import { pests, getPestImage } from "@/lib/pest-data";
+import { getPestImage } from "@/lib/pest-data";
+import { trpc } from "@/lib/trpc";
 import MauriIcons from "@/components/MauriIcons";
+import { Loader2 } from "lucide-react";
 import MauriImpactForm from "@/components/MauriImpactForm";
 import NotFound from "@/pages/NotFound";
 
@@ -15,16 +17,26 @@ export default function PestDetail() {
   if (!match || !params) return <NotFound />;
   
   const decodedTitle = decodeURIComponent(params.title);
-  const pest = pests.find(p => p.Title === decodedTitle);
+  const { data: pest, isLoading } = trpc.pests.getByTitle.useQuery({ title: decodedTitle });
+  
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </Layout>
+    );
+  }
   
   if (!pest) return <NotFound />;
   
   const imagePath = getPestImage(pest);
   
   // Parse comma-separated lists
-  const groups = pest.pestgroups ? pest.pestgroups.split(',').map(s => s.trim()) : [];
-  const types = pest.pesttypes ? pest.pesttypes.split(',').map(s => s.trim()) : [];
-  const approaches = pest.managementapproaches ? pest.managementapproaches.split(',').map(s => s.trim()) : [];
+  const groups = pest.pestGroups ? pest.pestGroups.split(',').map(s => s.trim()) : [];
+  const types = pest.pestTypes ? pest.pestTypes.split(',').map(s => s.trim()) : [];
+  const approaches = pest.managementApproaches ? pest.managementApproaches.split(',').map(s => s.trim()) : [];
   const keywords = pest.keywords ? pest.keywords.split(',').map(s => s.trim()) : [];
 
   return (
@@ -46,41 +58,43 @@ export default function PestDetail() {
                       {group}
                     </Badge>
                   ))}
-                  {pest.Alert && (
+                  {pest.alert && (
                     <Badge variant="destructive" className="bg-destructive text-destructive-foreground hover:bg-destructive/90 border-none uppercase tracking-wider text-[10px] font-bold">
                       <AlertTriangle className="w-3 h-3 mr-1" /> Alert
                     </Badge>
                   )}
                 </div>
                 <MauriIcons 
-                  groups={pest.pestgroups} 
-                  management={pest.managementapproaches} 
-                  alert={pest.Alert} 
+                  groups={pest.pestGroups || ''} 
+                  management={pest.managementApproaches || ''} 
+                  alert={pest.alert} 
                 />
               </div>
               
               <h1 className="font-serif text-4xl md:text-6xl font-bold text-foreground leading-tight">
-                {pest.Title}
+                {pest.title}
               </h1>
               
               <div className="flex flex-col gap-1">
                 <p className="text-xl md:text-2xl text-primary font-serif italic">
-                  {pest.Latin}
+                  {pest.latin}
                 </p>
-                {pest.AlsoKnownAs && (
+                {pest.alsoKnownAs && (
                   <p className="text-muted-foreground">
-                    <span className="font-semibold">Also known as:</span> {pest.AlsoKnownAs}
+                    <span className="font-semibold">Also known as:</span> {pest.alsoKnownAs}
                   </p>
                 )}
               </div>
             </div>
             
             <div className="flex gap-3">
-              <a href={`https://www.ecan.govt.nz${pest.Link}`} target="_blank" rel="noopener noreferrer">
+              {pest.link && (
+                <a href={`https://www.ecan.govt.nz${pest.link}`} target="_blank" rel="noopener noreferrer">
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 rounded-full">
                   View on ECan Website <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
-              </a>
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -94,7 +108,7 @@ export default function PestDetail() {
               {imagePath ? (
                 <img 
                   src={imagePath} 
-                  alt={pest.Title}
+                  alt={pest.title}
                   className="w-full h-auto object-cover"
                 />
               ) : (
@@ -128,13 +142,13 @@ export default function PestDetail() {
             </div>
 
             <div className="mt-8">
-              <MauriImpactForm pestTitle={pest.Title} />
+              <MauriImpactForm pestId={pest.id} pestTitle={pest.title} />
             </div>
           </div>
 
           {/* Sidebar - Details */}
           <div className="lg:col-span-5 space-y-8">
-            {pest.Alert && (
+            {pest.alert && (
               <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-destructive/10 p-3 rounded-full text-destructive shrink-0">
@@ -143,7 +157,7 @@ export default function PestDetail() {
                   <div>
                     <h3 className="font-serif text-xl font-bold text-destructive mb-2">Active Alert</h3>
                     <p className="text-destructive/80 leading-relaxed">
-                      This species is classified as a high-priority pest. Please report any sightings immediately to Environment Canterbury.
+                      This species is classified as a high-priority pest. Please report any sightings immediately to Mauri Compass.
                     </p>
                   </div>
                 </div>
@@ -179,7 +193,7 @@ export default function PestDetail() {
                       <h4 className="font-bold text-secondary-foreground mb-1">{approach}</h4>
                       <p className="text-sm text-muted-foreground">
                         {approach === "Community led" && "Managed primarily through community initiatives and volunteer groups."}
-                        {approach === "Canterbury Regional Pest Management Plan" && "Subject to specific rules in the Regional Pest Management Plan."}
+                        {approach === "Regional Pest Management Plan" && "Subject to specific rules in the Regional Pest Management Plan."}
                         {approach === "Unwanted organisms" && "Legally declared as an unwanted organism under the Biosecurity Act."}
                         {approach === "National Interest Pest Response" && "Managed under a national coordinated response program."}
                       </p>
