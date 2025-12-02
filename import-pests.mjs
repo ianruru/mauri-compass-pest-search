@@ -20,27 +20,66 @@ console.log('✅ Connected to database');
 // Create tables first
 console.log('Creating tables...');
 
+// Create users table
+await connection.execute(`
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  openId VARCHAR(64) NOT NULL UNIQUE,
+  name TEXT,
+  email VARCHAR(320),
+  loginMethod VARCHAR(64),
+  role ENUM('user','admin') NOT NULL DEFAULT 'user',
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  lastSignedIn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+// Create pests table
 await connection.execute(`
 CREATE TABLE IF NOT EXISTS pests (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL UNIQUE,
   latin VARCHAR(255),
   alsoKnownAs TEXT,
   keywords TEXT,
   pestGroups TEXT,
   pestTypes TEXT,
   managementApproaches TEXT,
-  alert BOOLEAN DEFAULT FALSE,
-  pinned BOOLEAN DEFAULT FALSE,
-  visible BOOLEAN DEFAULT TRUE,
-  featuredImage TEXT,
+  alert BOOLEAN NOT NULL DEFAULT FALSE,
+  pinned BOOLEAN NOT NULL DEFAULT FALSE,
+  visible BOOLEAN NOT NULL DEFAULT TRUE,
+  featuredImage VARCHAR(500),
   link TEXT,
-  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 `);
 
-console.log('✅ Tables created');
+// Create submissions table
+await connection.execute(`
+CREATE TABLE IF NOT EXISTS submissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pestId INT NOT NULL,
+  pestTitle VARCHAR(255) NOT NULL,
+  location VARCHAR(500) NOT NULL,
+  observationDate TIMESTAMP NOT NULL,
+  notes TEXT,
+  impactWhenua ENUM('none','low','medium','high','severe'),
+  impactWai ENUM('none','low','medium','high','severe'),
+  impactTangata ENUM('none','low','medium','high','severe'),
+  photoUrls TEXT,
+  photoKeys TEXT,
+  submitterName VARCHAR(255),
+  submitterEmail VARCHAR(320),
+  ipAddress VARCHAR(45),
+  userAgent TEXT,
+  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+`);
+
+console.log('✅ All tables created (users, pests, submissions)');
 
 // Check if pests already exist
 const [existing] = await connection.execute('SELECT COUNT(*) as count FROM pests');
