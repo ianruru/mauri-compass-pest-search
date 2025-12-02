@@ -95,9 +95,14 @@ export async function getUserByOpenId(openId: string) {
 
 export async function getAllPests() {
   const db = await getDb();
-  if (!db) return [];
+  if (!db) {
+    console.error('[getAllPests] Database connection is null!');
+    return [];
+  }
   
-  return await db.select().from(pests).where(eq(pests.visible, true)).orderBy(pests.title);
+  const result = await db.select().from(pests).where(eq(pests.visible, true)).orderBy(pests.title);
+  console.log(`[getAllPests] Found ${result.length} pests`);
+  return result;
 }
 
 export async function getPestById(id: number) {
