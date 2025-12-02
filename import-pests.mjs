@@ -17,6 +17,13 @@ console.log('Connecting to database...');
 const connection = await mysql.createConnection(DATABASE_URL);
 console.log('✅ Connected to database');
 
+// Drop existing tables to ensure clean state
+console.log('Dropping existing tables if they exist...');
+await connection.execute('DROP TABLE IF EXISTS submissions');
+await connection.execute('DROP TABLE IF EXISTS pests');
+await connection.execute('DROP TABLE IF EXISTS users');
+console.log('✅ Existing tables dropped');
+
 // Create tables first
 console.log('Creating tables...');
 
