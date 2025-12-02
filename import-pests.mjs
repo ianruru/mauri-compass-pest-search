@@ -81,13 +81,16 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 console.log('✅ All tables created (users, pests, submissions)');
 
-// Check if pests already exist
+// Check if pests already exist AFTER creating tables
 const [existing] = await connection.execute('SELECT COUNT(*) as count FROM pests');
+console.log(`Current pest count: ${existing[0].count}`);
 if (existing[0].count > 0) {
   console.log(`⚠️  Database already has ${existing[0].count} pests. Skipping import.`);
   await connection.end();
   process.exit(0);
 }
+
+console.log('No pests found. Starting import...');
 
 // Read and execute SQL import file
 const sqlFile = join(__dirname, 'pests-import.sql');
